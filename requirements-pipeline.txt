@@ -1,0 +1,6 @@
+yt-dlp
+openai-whisper
+langchain-text-splitters
+tqdm
+voyageai
+pinecone

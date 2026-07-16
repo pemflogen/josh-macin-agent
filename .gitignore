@@ -1,0 +1,8 @@
+.env
+__pycache__
+*.pyc
+load_transcripts.py
+download_and_transcribe.py
+content_pipeline_downloads/
+.DS_Store
+venv
