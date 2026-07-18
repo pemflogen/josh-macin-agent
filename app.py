@@ -61,6 +61,9 @@ def chat():
     history = data.get("history", [])
     images = data.get("images", [])
 
+    for i, img in enumerate(images):
+        print(f"[image-debug] image[{i}] media_type={img.get('media_type')!r} data_len={len(img.get('data') or '')}", flush=True)
+
     for img in images:
         media_type = img.get("media_type", "")
         if media_type not in ALLOWED_IMAGE_TYPES:
