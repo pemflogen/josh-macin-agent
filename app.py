@@ -79,7 +79,9 @@ def strip_images_from_history(history_messages):
 
 @app.route("/")
 def home():
-    return send_from_directory(".", "ui.html")
+    response = send_from_directory(".", "ui.html")
+    response.headers["Cache-Control"] = "no-cache, must-revalidate"
+    return response
 
 @app.route("/verify-password", methods=["POST"])
 def verify_password():
