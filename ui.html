@@ -661,7 +661,7 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js" onerror="console.error('[HEIC] heic2any failed to load from CDN - HEIC files will not be converted')"></script>
 <script>
   let history = [];
   let currentImages = []; // [{data, type}]
@@ -983,14 +983,21 @@
     let workingFile = file;
     let converted = false;
     if (isHeicFile(file)) {
-      try {
-        const result = await heic2any({blob: file, toType: 'image/jpeg', quality: 0.9});
-        const blob = Array.isArray(result) ? result[0] : result;
-        const jpegName = (file.name || 'photo').replace(/\.(heic|heif)$/i, '') + '.jpg';
-        workingFile = new File([blob], jpegName, {type: 'image/jpeg'});
-        converted = true;
-      } catch (e) {
-        console.error('HEIC conversion failed, falling back to original file:', e);
+      console.log('[HEIC] Detected HEIC/HEIF file:', file.name, 'type="' + file.type + '"', file.size + ' bytes');
+      if (typeof heic2any !== 'function') {
+        console.error('[HEIC] heic2any is not available (CDN script did not load) - sending original file, backend will reject it');
+      } else {
+        try {
+          const t0 = performance.now();
+          const result = await heic2any({blob: file, toType: 'image/jpeg', quality: 0.9});
+          const blob = Array.isArray(result) ? result[0] : result;
+          const jpegName = (file.name || 'photo').replace(/\.(heic|heif)$/i, '') + '.jpg';
+          workingFile = new File([blob], jpegName, {type: 'image/jpeg'});
+          converted = true;
+          console.log('[HEIC] Converted to JPEG in', (performance.now() - t0).toFixed(0) + 'ms:', workingFile.name, workingFile.size + ' bytes');
+        } catch (e) {
+          console.error('[HEIC] Conversion failed, falling back to original file:', e && e.message ? e.message : e);
+        }
       }
     }
     const dataUrl = await readFileAsDataUrl(workingFile);
