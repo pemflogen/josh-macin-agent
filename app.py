@@ -140,7 +140,7 @@ def chat():
         try:
             with anthropic_client.messages.stream(
                 model="claude-opus-4-5",
-                max_tokens=1000,
+                max_tokens=8192,
                 system=SYSTEM_PROMPT,
                 messages=messages
             ) as stream:
@@ -300,7 +300,7 @@ Identify which of the above conversations (if any) are relevant to what the user
     try:
         response = anthropic_client.messages.create(
             model="claude-opus-4-5",
-            max_tokens=400,
+            max_tokens=8192,
             messages=[{"role": "user", "content": summarization_prompt}],
         )
         summary_text = response.content[0].text.strip()
